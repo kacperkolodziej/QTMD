@@ -23,4 +23,4 @@ HEADERS  += headers/qtmdmain.hpp
 
 FORMS    += qtmdmain.ui
 
-unix|win32: LIBS += -ltamandua -lboost_system -lboost_regex -lssl -lcrypto
+unix|win32: LIBS += -ltamandua_msg -lssl -lcrypto

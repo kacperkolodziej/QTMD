@@ -78,6 +78,12 @@
           <pointsize>9</pointsize>
          </font>
         </property>
+        <property name="contextMenuPolicy">
+         <enum>Qt::DefaultContextMenu</enum>
+        </property>
+        <property name="tabPosition">
+         <enum>QTabWidget::South</enum>
+        </property>
         <widget class="QWidget" name="tabHome">
          <attribute name="title">
           <string>~Home</string>

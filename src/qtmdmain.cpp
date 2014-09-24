@@ -1,6 +1,6 @@
 #include "qtmdmain.hpp"
 #include "ui_qtmdmain.h"
-#include "tamandua.hpp"
+#include "tamandua/message_composer.hpp"
 #include <string>
 
 QtmdMain::QtmdMain(QWidget *parent) :
@@ -25,5 +25,4 @@ void QtmdMain::on_btnSend_clicked()
     QString msg = ui->txtMessage->toPlainText();
     std::string msg_str = msg.toStdString();
     tamandua::message_composer msgc(tamandua::standard_message, msg_str);
-
 }
