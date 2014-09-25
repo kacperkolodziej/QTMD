@@ -24,3 +24,6 @@ HEADERS  += headers/qtmdmain.hpp
 FORMS    += qtmdmain.ui
 
 unix|win32: LIBS += -ltamandua_msg -lssl -lcrypto
+
+RESOURCES += \
+    resources/resources.qrc
