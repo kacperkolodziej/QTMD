@@ -88,6 +88,9 @@
         <property name="tabPosition">
          <enum>QTabWidget::South</enum>
         </property>
+        <property name="tabShape">
+         <enum>QTabWidget::Rounded</enum>
+        </property>
         <widget class="QWidget" name="tabHome">
          <attribute name="title">
           <string>~Home</string>

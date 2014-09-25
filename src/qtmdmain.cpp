@@ -1,9 +1,11 @@
 #include "qtmdmain.hpp"
 #include "ui_qtmdmain.h"
 #include "tamandua/message_composer.hpp"
+#include "tamandua/message_buffer.hpp"
 #include <string>
 #include <memory>
 #include <QMessageBox>
+#include <QCryptographicHash>
 
 QtmdMain::QtmdMain(QWidget *parent) :
     QMainWindow(parent),
@@ -41,7 +43,7 @@ void QtmdMain::updateUi()
     ui->txtAddress->setFocusPolicy(unconnected ? Qt::StrongFocus : Qt::NoFocus);
     ui->spinPort->setEnabled(unconnected);
 
-    ui->btnSend->setEnabled(connected);
+    ui->btnSend->setEnabled(!ui->chbEnter->isChecked() && connected);
     ui->chbEnter->setEnabled(connected);
 }
 
@@ -114,14 +116,82 @@ void QtmdMain::read_body()
 {
     int body_size = read_message.header.size;
     std::shared_ptr<char> body_buffer(new char[body_size]);
-    if (socket->read(body_buffer.get(), body_size) == 0)
+    if (socket->read(body_buffer.get(), body_size) == body_size)
     {
-        show_message();
+        tamandua::message_type type = read_message.header.type;
+        if (type == tamandua::standard_message)
+            add_message();
+        else if (type == tamandua::rooms_list)
+            set_rooms();
+        else if (type == tamandua::participants_list)
+            set_users();
+        else if (type == tamandua::group_enter_message)
+            create_tab();
+        else if (type == tamandua::group_leave_message)
+            remove_tab();
     }
 }
 
-void QtmdMain::show_message()
+void QtmdMain::add_message()
 {
-    QString msg(read_message.body.data());
-    QMessageBox::information(this, QString("Msg"), msg);
+    tamandua::message_buffer buffer(read_message.header, read_message.body);
+    QCryptographicHash hash(QCryptographicHash::Sha512);
+    hash.addData(buffer.get_buffer().get(), buffer.get_buffer_size());
+    QString hash_str(hash.result());
+    auto iterator = users.find(read_message.header.author);
+    if (iterator == users.end())
+        return;
+
+    QString author(iterator->second.data());
+    messages.insert(std::make_pair(hash_str, nick_message(author, read_message)));
+    messages_hashes.insert(std::make_pair(read_message.header.utc_time, hash_str));
+}
+
+void QtmdMain::send_message()
+{
+
+}
+
+void QtmdMain::set_users()
+{
+    QString all_users = QString::fromStdString(read_message.body);
+    QStringList users_list = all_users.split(';', QString::SkipEmptyParts);
+    foreach (const QString user, users_list)
+    {
+        QStringList user_data = user.split(':');
+        tamandua::id_number_t uid = user_data[0].toLongLong();
+        QString uname = user_data[1];
+        users.insert(std::make_pair(uid, uname));
+    }
+}
+
+void QtmdMain::set_rooms()
+{
+    QString all_rooms = QString::fromStdString(read_message.body);
+    QStringList rooms_list = all_rooms.split(';', QString::SkipEmptyParts);
+    foreach (const QString room, rooms_list)
+    {
+        QStringList room_data = room.split(':');
+        tamandua::id_number_t gid = room_data[0].toLongLong();
+        QString gname = room_data[1];
+        rooms.insert(std::make_pair(gid, gname));
+    }
+}
+
+void QtmdMain::create_tab()
+{
+    tab_elements tab;
+    tab.gid = read_message.header.group;
+    tab.name = QString::fromStdString(read_message.body);
+    tab.tab = new QWidget(ui->tabs);
+    tab.layout = new QVBoxLayout(tab.tab);
+    tab.web = new QWebView(tab.tab);
+    tab.layout->addWidget(tab.web);
+    tab.tab_index = ui->tabs->addTab(tab.tab, tab.name);
+    tabs.insert(std::make_pair(tab.gid, tab));
+}
+
+void QtmdMain::remove_tab()
+{
+
 }
