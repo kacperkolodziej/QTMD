@@ -33,6 +33,7 @@ private slots:
     void socketReadyToRead();
     void socketSslErrorsOccurred(QList<QSslError>);
     void btnSendClicked();
+    void btnCertClicked();
 
 private:
     void read_header();

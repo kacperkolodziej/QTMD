@@ -1,4 +1,5 @@
 #include "qtmdmain.hpp"
+#include "sslcertificate.hpp"
 #include "ui_qtmdmain.h"
 #include "MessageEdit.hpp"
 #include "tamandua/message_composer.hpp"
@@ -46,6 +47,7 @@ QtmdMain::QtmdMain(QWidget *parent) :
     layCert->addWidget(btnCert);
     ui->txtAddress->setLayout(layCert);
 
+    connect(btnCert, SIGNAL(clicked()), this, SLOT(btnCertClicked()));
     setupColors();
 }
 
@@ -139,6 +141,14 @@ void QtmdMain::socketSslErrorsOccurred(QList<QSslError> errors)
 void QtmdMain::btnSendClicked()
 {
     send_message();
+}
+
+void QtmdMain::btnCertClicked()
+{
+    SSLCertificate *certinfo = new SSLCertificate(this);
+    certinfo->setCertificateChain(socket->peerCertificateChain());
+    certinfo->exec();
+    certinfo->deleteLater();
 }
 
 void QtmdMain::read_header()
