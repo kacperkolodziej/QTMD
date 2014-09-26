@@ -142,7 +142,7 @@ void QtmdMain::socketChangeState(QAbstractSocket::SocketState state)
 
 void QtmdMain::socketIsEncrypted()
 {
-    QMessageBox::information(this, QString("Signal"), QString("Socket is encrypted!"));
+    QMessageBox::information(this, QString("Signal"), QString("Secure connection established!"));
 }
 
 void QtmdMain::socketReadyToRead()
@@ -282,11 +282,21 @@ void QtmdMain::create_tab()
     tab.tab_index = ui->tabs->addTab(tab.tab, tab.name);
     tabs.insert(std::make_pair(tab.gid, tab));
     tab_gid.insert(std::make_pair(tab.tab_index, tab.gid));
+    ui->tabs->setCurrentIndex(tab.tab_index);
 }
 
 void QtmdMain::remove_tab()
 {
+    auto tab_it = tabs.find(read_message.header.group);
+    if (tab_it == tabs.end())
+    {// error
+        return;
+    }
 
+    tab_elements tab = tab_it->second;
+    ui->tabs->removeTab(tab.tab_index);
+    tabs.erase(tab_it);
+    tab_gid.erase(tab.gid);
 }
 
 QString QtmdMain::generate_html(tamandua::id_number_t gid)

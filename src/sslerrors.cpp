@@ -29,7 +29,7 @@ void SSLErrors::setErrors(const QList<QSslError> errors)
 void SSLErrors::on_btnCertificate_clicked()
 {
     SSLCertificate *certificate = new SSLCertificate(this);
-    //certificate->setCertificateChain();
+    certificate->setCertificateChain(reinterpret_cast<QtmdMain*>(parentWidget())->getSocket()->peerCertificateChain());
     certificate->exec();
     certificate->deleteLater();
 }
