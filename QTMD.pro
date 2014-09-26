@@ -19,14 +19,17 @@ DEPENDPATH += headers
 SOURCES += main.cpp\
         src/qtmdmain.cpp \
     src/MessageEdit.cpp \
-    src/sslcertificate.cpp
+    src/sslcertificate.cpp \
+    src/sslerrors.cpp
 
 HEADERS  += headers/qtmdmain.hpp \
     headers/MessageEdit.hpp \
-    headers/sslcertificate.hpp
+    headers/sslcertificate.hpp \
+    headers/sslerrors.hpp
 
 FORMS    += qtmdmain.ui \
-    sslcertificate.ui
+    sslcertificate.ui \
+    sslerrors.ui
 
 unix|win32: LIBS += -ltamandua_msg -lssl -lcrypto
 

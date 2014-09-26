@@ -1,5 +1,6 @@
 #include "qtmdmain.hpp"
 #include "sslcertificate.hpp"
+#include "sslerrors.hpp"
 #include "ui_qtmdmain.h"
 #include "MessageEdit.hpp"
 #include "tamandua/message_composer.hpp"
@@ -59,12 +60,18 @@ QtmdMain::~QtmdMain()
 void QtmdMain::updateUi()
 {
     bool connected = socket && socket->state() == QAbstractSocket::ConnectedState;
-    bool unconnected = !connected;
+    bool unconnected = socket->state() != QAbstractSocket::ConnectedState;
 
     ui->btnConnect->setEnabled(unconnected && !ui->txtAddress->text().isEmpty());
     ui->txtAddress->setReadOnly(unconnected);
     ui->txtAddress->setFocusPolicy(unconnected ? Qt::StrongFocus : Qt::NoFocus);
-    ui->spinPort->setEnabled(unconnected);
+    ui->spinPort->setReadOnly(unconnected);
+
+    msgEdit->setDisabled(unconnected);
+    btnSend->setDisabled(unconnected);
+
+    if (connected)
+        msgEdit->setFocus();
 }
 
 void QtmdMain::setupColors()
@@ -85,11 +92,21 @@ void QtmdMain::setupColors()
     errorColor = QString("#ad0202");
 
     messageHtml = QString("<time>%1</time> <span class=\"nick\" style=\"color: %2;\">%3</span>: %4<br />");
-    infoHtml = QString("<span class=\"info\" style=\"color: %1;\">%2</span><br />");
-    warningHtml = QString("<span class=\"warning\" style=\"color: %1;\">%2</span><br />");
-    errorHtml = QString("<span class=\"error\" style=\"color: %1;\">%2</span><br />");
+    infoHtml = QString("<time>%1</time> <span class=\"info\" style=\"color: %2;\">%3</span><br />");
+    warningHtml = QString("<time>%1</time> <span class=\"warning\" style=\"color: %2;\">%3</span><br />");
+    errorHtml = QString("<time>%1</time> <span class=\"error\" style=\"color: %2;\">%3</span><br />");
 
-    cssStyle = QString("body { margin: 15px 10px; background: #fff; font-family: 'Cantarell', 'Tahoma', 'Verdana'; font-size: 14px; } time { color: #ccc; } .nick { font-weight: bold; } .info { font-weight: 600; } .warning { font-weight: 400 } .error { font-weight: 700; }");
+    cssStyle = QString("body { margin: 15px 10px; background: #fff; font-family: 'Cantarell', 'Tahoma', 'Verdana'; font-size: 14px; } time { color: #aaa; } .nick { font-weight: bold; } .info { font-weight: 600; } .warning { font-weight: 400 } .error { font-weight: 700; }");
+}
+
+void QtmdMain::ignoreSslErrors(bool ignore)
+{
+    ignoreSslErr = ignore;
+}
+
+QSslSocket * QtmdMain::getSocket()
+{
+    return socket;
 }
 
 void QtmdMain::on_btnConnect_clicked()
@@ -125,7 +142,7 @@ void QtmdMain::socketChangeState(QAbstractSocket::SocketState state)
 
 void QtmdMain::socketIsEncrypted()
 {
-    // wyczysc karty
+    QMessageBox::information(this, QString("Signal"), QString("Socket is encrypted!"));
 }
 
 void QtmdMain::socketReadyToRead()
@@ -135,7 +152,12 @@ void QtmdMain::socketReadyToRead()
 
 void QtmdMain::socketSslErrorsOccurred(QList<QSslError> errors)
 {
-    socket->ignoreSslErrors();
+    SSLErrors *errDialog = new SSLErrors(this);
+    errDialog->setErrors(errors);
+    if (errDialog->exec() == QDialog::Accepted)
+        socket->ignoreSslErrors();
+    else
+        QMessageBox::information(this, QString("Connection"), QString("Connecting aborted!"));
 }
 
 void QtmdMain::btnSendClicked()
@@ -300,13 +322,13 @@ QString QtmdMain::generate_html(tamandua::id_number_t gid)
             html += messageHtml.arg(timeStr).arg(nickColor[msg.header.author % 10]).arg(author).arg(QString::fromStdString(msg.body));
         } else if (type == tamandua::info_message)
         {
-            html += infoHtml.arg(infoColor).arg(QString::fromStdString(msg.body));
+            html += infoHtml.arg(timeStr).arg(infoColor).arg(QString::fromStdString(msg.body));
         } else if (type == tamandua::warning_message)
         {
-            html += warningHtml.arg(warningColor).arg(QString::fromStdString(msg.body));
+            html += warningHtml.arg(timeStr).arg(warningColor).arg(QString::fromStdString(msg.body));
         } else if (type == tamandua::error_message)
         {
-            html += errorHtml.arg(errorColor).arg(QString::fromStdString(msg.body));
+            html += errorHtml.arg(timeStr).arg(errorColor).arg(QString::fromStdString(msg.body));
         }
     }
     return html;

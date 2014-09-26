@@ -26,6 +26,9 @@ public:
     void updateUi();
     void setupColors();
 
+    void ignoreSslErrors(bool);
+    QSslSocket * getSocket();
+
 private slots:
     void on_btnConnect_clicked();
     void socketChangeState(QAbstractSocket::SocketState);
@@ -86,6 +89,8 @@ private:
 
     std::map<tamandua::id_number_t, tab_elements> tabs;
     std::map<int, tamandua::id_number_t> tab_gid;
+
+    bool ignoreSslErr;
 };
 
 #endif // QTMDMAIN_HPP
