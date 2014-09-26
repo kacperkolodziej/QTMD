@@ -34,7 +34,7 @@
       <item>
        <widget class="QLineEdit" name="txtAddress">
         <property name="text">
-         <string notr="true">talk.tmnd.net</string>
+         <string notr="true">s1.tmnd.net</string>
         </property>
        </widget>
       </item>
@@ -100,7 +100,7 @@
            <widget class="QWebView" name="webHome">
             <property name="url">
              <url>
-              <string>https://tmnd.net/</string>
+              <string>qrc:/docs/homepage.html</string>
              </url>
             </property>
            </widget>
@@ -112,30 +112,10 @@
      </layout>
     </item>
     <item>
-     <layout class="QGridLayout" name="gridInput" rowstretch="0,0" columnstretch="4,1">
-      <item row="1" column="1">
-       <widget class="QPushButton" name="btnSend">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Send</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="chbEnter">
-        <property name="text">
-         <string>Enter sends</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" rowspan="2">
-       <widget class="QPlainTextEdit" name="txtMessage"/>
-      </item>
+     <layout class="QGridLayout" name="gridInput" rowstretch="0" columnstretch="0">
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
      </layout>
     </item>
    </layout>

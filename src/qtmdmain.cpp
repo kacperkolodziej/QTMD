@@ -1,11 +1,15 @@
 #include "qtmdmain.hpp"
 #include "ui_qtmdmain.h"
+#include "MessageEdit.hpp"
 #include "tamandua/message_composer.hpp"
 #include "tamandua/message_buffer.hpp"
 #include <string>
 #include <memory>
+#include <functional>
 #include <QMessageBox>
 #include <QCryptographicHash>
+#include <QWebFrame>
+#define DMsg(x) QMessageBox::information(this, QString(), x)
 
 QtmdMain::QtmdMain(QWidget *parent) :
     QMainWindow(parent),
@@ -16,7 +20,20 @@ QtmdMain::QtmdMain(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    msgEdit = new MessageEdit;
+    msgEdit->setEnterProcess(true);
+    msgEdit->setEnterCallback(std::bind(&QtmdMain::send_message, this));
+    ui->gridInput->addWidget(msgEdit, 0, 0);
+    laySend = new QGridLayout(msgEdit);
+    btnSend = new QToolButton(msgEdit);
+    btnSend->setIcon(QIcon(":/imgs/send.png"));
+    btnSend->resize(17,17);
+    laySend->setSpacing(0);
+    laySend->setMargin(msgEdit->style()->pixelMetric(QStyle::PM_DefaultFrameWidth) + 3);
+    laySend->addWidget(btnSend, 0, 0, Qt::AlignRight | Qt::AlignBottom);
+
     btnCert->setIcon(QIcon(":/imgs/lock.png"));
+    btnCert->setCursor(Qt::ArrowCursor);
     int size = ui->txtAddress->height() - 2;
     btnCert->resize(size, size);
     btnCert->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
@@ -26,6 +43,8 @@ QtmdMain::QtmdMain(QWidget *parent) :
     layCert->addStretch();
     layCert->addWidget(btnCert);
     ui->txtAddress->setLayout(layCert);
+
+    setupColors();
 }
 
 QtmdMain::~QtmdMain()
@@ -42,21 +61,31 @@ void QtmdMain::updateUi()
     ui->txtAddress->setReadOnly(unconnected);
     ui->txtAddress->setFocusPolicy(unconnected ? Qt::StrongFocus : Qt::NoFocus);
     ui->spinPort->setEnabled(unconnected);
-
-    ui->btnSend->setEnabled(!ui->chbEnter->isChecked() && connected);
-    ui->chbEnter->setEnabled(connected);
 }
 
-void QtmdMain::on_chbEnter_stateChanged(int state)
+void QtmdMain::setupColors()
 {
-    ui->btnSend->setDisabled(state);
-}
+    nickColor[0] = QString("#f2aca0");
+    nickColor[1] = QString("#f20a0a");
+    nickColor[2] = QString("#1e8509");
+    nickColor[3] = QString("#04d4bb");
+    nickColor[4] = QString("#0468d4");
+    nickColor[5] = QString("#170875");
+    nickColor[6] = QString("#8605e8");
+    nickColor[7] = QString("#e414f7");
+    nickColor[8] = QString("#3b3d05");
+    nickColor[9] = QString("#0a2b29");
 
-void QtmdMain::on_btnSend_clicked()
-{
-    QString msg = ui->txtMessage->toPlainText();
-    std::string msg_str = msg.toStdString();
-    tamandua::message_composer msgc(tamandua::standard_message, msg_str);
+    infoColor = QString("#25b507");
+    warningColor = QString("#e87800");
+    errorColor = QString("#ad0202");
+
+    messageHtml = QString("<time>%1</time> <span class=\"nick\" style=\"color: %2;\">%3</span>: %4<br />");
+    infoHtml = QString("<span class=\"info\" style=\"color: %1;\">%2</span><br />");
+    warningHtml = QString("<span class=\"warning\" style=\"color: %1;\">%2</span><br />");
+    errorHtml = QString("<span class=\"error\" style=\"color: %1;\">%2</span><br />");
+
+    cssStyle = QString("body { margin: 15px 10px; background: #fff; font-family: 'Cantarell', 'Tahoma', 'Verdana'; font-size: 14px; } time { color: #ccc; } .nick { font-weight: bold; } .info { font-weight: 600; } .warning { font-weight: 400 } .error { font-weight: 700; }");
 }
 
 void QtmdMain::on_btnConnect_clicked()
@@ -76,9 +105,14 @@ void QtmdMain::on_btnConnect_clicked()
 void QtmdMain::socketChangeState(QAbstractSocket::SocketState state)
 {
     updateUi();
-    if (state == QAbstractSocket::UnconnectedState)
+    if (state == QAbstractSocket::ConnectedState)
     {
-        QMessageBox::information(this, QString("Connection"), QString("Unconnected"));
+        QPalette palette;
+        palette.setColor(QPalette::Base, QColor(255, 255, 192));
+        ui->txtAddress->setPalette(palette);
+        btnCert->show();
+    } else if (state == QAbstractSocket::UnconnectedState)
+    {
         ui->txtAddress->setPalette(QPalette());
         ui->txtAddress->setFocus();
     }
@@ -96,9 +130,6 @@ void QtmdMain::socketReadyToRead()
 
 void QtmdMain::socketSslErrorsOccurred(QList<QSslError> errors)
 {
-    /*foreach (const QSslError error, errors) {
-        QMessageBox::information(this, QString("SSL ERROR"), error.errorString());
-    }*/
     socket->ignoreSslErrors();
 }
 
@@ -108,8 +139,7 @@ void QtmdMain::read_header()
     if (socket->read(reinterpret_cast<char*>(&read_message.header), header_size) == header_size)
     {
        read_body();
-    } else
-        QMessageBox::information(this, QString("title"), QString("Error while reading message header"));
+    }
 }
 
 void QtmdMain::read_body()
@@ -119,7 +149,8 @@ void QtmdMain::read_body()
     if (socket->read(body_buffer.get(), body_size) == body_size)
     {
         tamandua::message_type type = read_message.header.type;
-        if (type == tamandua::standard_message)
+        read_message.body = std::string(body_buffer.get(), body_size);
+        if (type == tamandua::standard_message || type == tamandua::info_message || type == tamandua::error_message || type == tamandua::warning_message)
             add_message();
         else if (type == tamandua::rooms_list)
             set_rooms();
@@ -139,17 +170,31 @@ void QtmdMain::add_message()
     hash.addData(buffer.get_buffer().get(), buffer.get_buffer_size());
     QString hash_str(hash.result());
     auto iterator = users.find(read_message.header.author);
+    QString author;
     if (iterator == users.end())
-        return;
-
-    QString author(iterator->second.data());
-    messages.insert(std::make_pair(hash_str, nick_message(author, read_message)));
-    messages_hashes.insert(std::make_pair(read_message.header.utc_time, hash_str));
+        author = "[server]";
+    else
+        author = iterator->second;
+    auto insp = messages.insert(std::make_pair(hash_str, nick_message(author, read_message)));
+    if (insp.second == true)
+    {
+        messages_hashes.insert(std::make_pair(read_message.header.utc_time, hash_str));
+        auto tab = tabs.find(read_message.header.group);
+        tab->second.web->setHtml(generate_html(read_message.header.group));
+        tab->second.web->page()->mainFrame()->setScrollBarValue(Qt::Vertical, tab->second.web->page()->mainFrame()->scrollBarMaximum(Qt::Vertical));
+    }
 }
 
 void QtmdMain::send_message()
 {
-
+    std::string msg_body = msgEdit->toPlainText().toStdString();
+    tamandua::message_composer msgc(tamandua::standard_message, msg_body, 0);
+    tamandua::message msg = msgc();
+    tamandua::message_buffer msg_buf(msg.header, msg.body);
+    if (socket->write(msg_buf.get_buffer().get(), msg_buf.get_buffer_size()) != static_cast<qint64>(msg_buf.get_buffer_size()))
+    {
+        DMsg(QString("Error while sending message!"));
+    }
 }
 
 void QtmdMain::set_users()
@@ -195,3 +240,50 @@ void QtmdMain::remove_tab()
 {
 
 }
+
+QString QtmdMain::generate_html(tamandua::id_number_t gid)
+{
+    auto tab = tabs.find(gid);
+    if (tab == tabs.end())
+        return QString("<h1>Not found!</h1>");
+
+    QString html;
+    html += QString("<style type=\"text/css\">%1</style>").arg(cssStyle);
+    for (auto msgh = messages_hashes.begin(); msgh != messages_hashes.end(); ++msgh)
+    {
+        auto msgp = messages.find(msgh->second);
+        QString author = msgp->second.nick;
+        tamandua::message msg = msgp->second.msg;
+        tamandua::message_type type = msg.header.type;
+
+        QDateTime datetime = QDateTime::fromTime_t(msg.header.utc_time);
+        datetime = datetime.toLocalTime();
+        QDate date = datetime.date(), today_date = QDate::currentDate();
+        QString timeStr;
+        bool today = (today_date.year() == date.year() && today_date.month() == date.month() && today_date.day() == date.day());
+        if (today)
+            timeStr = datetime.time().toString("hh:mm:ss");
+        else
+            timeStr = datetime.date().toString("dd/MM/yyyy ") + datetime.time().toString("hh:mm:ss");
+
+        if (type == tamandua::standard_message)
+        {
+            html += messageHtml.arg(timeStr).arg(nickColor[msg.header.author % 10]).arg(author).arg(QString::fromStdString(msg.body));
+        } else if (type == tamandua::info_message)
+        {
+            html += infoHtml.arg(infoColor).arg(QString::fromStdString(msg.body));
+        } else if (type == tamandua::warning_message)
+        {
+            html += warningHtml.arg(warningColor).arg(QString::fromStdString(msg.body));
+        } else if (type == tamandua::error_message)
+        {
+            html += errorHtml.arg(errorColor).arg(QString::fromStdString(msg.body));
+        }
+    }
+    return html;
+}
+
+
+
+
+

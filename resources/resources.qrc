@@ -2,6 +2,9 @@
     <qresource prefix="/imgs">
         <file>icon.ico</file>
         <file>lock.png</file>
+        <file>send.png</file>
     </qresource>
-    <qresource prefix="/docs"/>
+    <qresource prefix="/docs">
+        <file>homepage.html</file>
+    </qresource>
 </RCC>

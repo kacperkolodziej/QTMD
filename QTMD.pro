@@ -17,9 +17,11 @@ INCLUDEPATH += headers
 DEPENDPATH += headers
 
 SOURCES += main.cpp\
-        src/qtmdmain.cpp
+        src/qtmdmain.cpp \
+    src/MessageEdit.cpp
 
-HEADERS  += headers/qtmdmain.hpp
+HEADERS  += headers/qtmdmain.hpp \
+    headers/MessageEdit.hpp
 
 FORMS    += qtmdmain.ui
 

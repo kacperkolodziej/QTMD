@@ -5,9 +5,11 @@
 #include <QToolButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QCheckBox>
 #include <QWebView>
 #include <QtNetwork/QSslSocket>
 #include <map>
+#include "MessageEdit.hpp"
 #include "tamandua/message.hpp"
 
 namespace Ui {
@@ -22,10 +24,9 @@ public:
     explicit QtmdMain(QWidget *parent = 0);
     ~QtmdMain();
     void updateUi();
+    void setupColors();
 
 private slots:
-    void on_chbEnter_stateChanged(int);
-    void on_btnSend_clicked();
     void on_btnConnect_clicked();
     void socketChangeState(QAbstractSocket::SocketState);
     void socketIsEncrypted();
@@ -42,6 +43,8 @@ private:
 
     void create_tab();
     void remove_tab();
+
+    QString generate_html(tamandua::id_number_t);
 
 private:
     struct nick_message {
@@ -65,6 +68,13 @@ private:
     QSslSocket *socket;
     QToolButton *btnCert;
     QHBoxLayout *layCert;
+    QGridLayout *laySend;
+    QToolButton *btnSend;
+    MessageEdit *msgEdit;
+
+    QString nickColor[10], infoColor, warningColor, errorColor;
+    QString messageHtml, infoHtml, warningHtml, errorHtml;
+    QString cssStyle;
 
     tamandua::message read_message;
     std::map<QString, nick_message> messages;
