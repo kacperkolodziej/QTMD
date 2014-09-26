@@ -32,6 +32,8 @@ QtmdMain::QtmdMain(QWidget *parent) :
     laySend->setMargin(msgEdit->style()->pixelMetric(QStyle::PM_DefaultFrameWidth) + 3);
     laySend->addWidget(btnSend, 0, 0, Qt::AlignRight | Qt::AlignBottom);
 
+    connect(btnSend, SIGNAL(clicked()), this, SLOT(btnSendClicked()));
+
     btnCert->setIcon(QIcon(":/imgs/lock.png"));
     btnCert->setCursor(Qt::ArrowCursor);
     int size = ui->txtAddress->height() - 2;
@@ -100,6 +102,7 @@ void QtmdMain::on_btnConnect_clicked()
     }
 
     socket->connectToHostEncrypted(ui->txtAddress->text(), ui->spinPort->value());
+    updateUi();
 }
 
 void QtmdMain::socketChangeState(QAbstractSocket::SocketState state)
@@ -131,6 +134,11 @@ void QtmdMain::socketReadyToRead()
 void QtmdMain::socketSslErrorsOccurred(QList<QSslError> errors)
 {
     socket->ignoreSslErrors();
+}
+
+void QtmdMain::btnSendClicked()
+{
+    send_message();
 }
 
 void QtmdMain::read_header()
@@ -188,13 +196,20 @@ void QtmdMain::add_message()
 void QtmdMain::send_message()
 {
     std::string msg_body = msgEdit->toPlainText().toStdString();
-    tamandua::message_composer msgc(tamandua::standard_message, msg_body, 0);
+    int tab_index = ui->tabs->currentIndex();
+    auto tab = tab_gid.find(tab_index);
+    tamandua::id_number_t gid = tab->second;
+    tamandua::message_composer msgc(tamandua::standard_message, msg_body, gid);
     tamandua::message msg = msgc();
     tamandua::message_buffer msg_buf(msg.header, msg.body);
-    if (socket->write(msg_buf.get_buffer().get(), msg_buf.get_buffer_size()) != static_cast<qint64>(msg_buf.get_buffer_size()))
+    if (socket->write(msg_buf.get_buffer().get(), msg_buf.get_buffer_size()) == static_cast<qint64>(msg_buf.get_buffer_size()))
+    {
+        msgEdit->clear();
+    } else
     {
         DMsg(QString("Error while sending message!"));
     }
+
 }
 
 void QtmdMain::set_users()
@@ -234,6 +249,7 @@ void QtmdMain::create_tab()
     tab.layout->addWidget(tab.web);
     tab.tab_index = ui->tabs->addTab(tab.tab, tab.name);
     tabs.insert(std::make_pair(tab.gid, tab));
+    tab_gid.insert(std::make_pair(tab.tab_index, tab.gid));
 }
 
 void QtmdMain::remove_tab()
@@ -252,8 +268,11 @@ QString QtmdMain::generate_html(tamandua::id_number_t gid)
     for (auto msgh = messages_hashes.begin(); msgh != messages_hashes.end(); ++msgh)
     {
         auto msgp = messages.find(msgh->second);
-        QString author = msgp->second.nick;
         tamandua::message msg = msgp->second.msg;
+        if (msg.header.group != gid)
+            continue;
+
+        QString author = msgp->second.nick;
         tamandua::message_type type = msg.header.type;
 
         QDateTime datetime = QDateTime::fromTime_t(msg.header.utc_time);
@@ -282,8 +301,3 @@ QString QtmdMain::generate_html(tamandua::id_number_t gid)
     }
     return html;
 }
-
-
-
-
-

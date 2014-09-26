@@ -32,6 +32,7 @@ private slots:
     void socketIsEncrypted();
     void socketReadyToRead();
     void socketSslErrorsOccurred(QList<QSslError>);
+    void btnSendClicked();
 
 private:
     void read_header();
@@ -83,6 +84,7 @@ private:
     std::map<tamandua::id_number_t, QString> rooms;
 
     std::map<tamandua::id_number_t, tab_elements> tabs;
+    std::map<int, tamandua::id_number_t> tab_gid;
 };
 
 #endif // QTMDMAIN_HPP
