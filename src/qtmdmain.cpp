@@ -248,12 +248,14 @@ void QtmdMain::set_users()
 {
     QString all_users = QString::fromStdString(read_message.body);
     QStringList users_list = all_users.split(';', QString::SkipEmptyParts);
+    ui->listUsers->clear();
     foreach (const QString user, users_list)
     {
         QStringList user_data = user.split(':');
         tamandua::id_number_t uid = user_data[0].toLongLong();
         QString uname = user_data[1];
         users.insert(std::make_pair(uid, uname));
+        ui->listUsers->addItem(uname);
     }
 }
 
@@ -261,12 +263,14 @@ void QtmdMain::set_rooms()
 {
     QString all_rooms = QString::fromStdString(read_message.body);
     QStringList rooms_list = all_rooms.split(';', QString::SkipEmptyParts);
+    ui->listRooms->clear();
     foreach (const QString room, rooms_list)
     {
         QStringList room_data = room.split(':');
         tamandua::id_number_t gid = room_data[0].toLongLong();
         QString gname = room_data[1];
         rooms.insert(std::make_pair(gid, gname));
+        ui->listRooms->addItem(gname);
     }
 }
 
