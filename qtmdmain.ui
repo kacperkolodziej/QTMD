@@ -18,7 +18,7 @@
     <normaloff>:/imgs/icon.ico</normaloff>:/imgs/icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="mainLayout">
+   <layout class="QVBoxLayout" name="mainLayout" stretch="0,8,2">
     <property name="spacing">
      <number>12</number>
     </property>
@@ -111,8 +111,8 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QWebView" name="webHome">
-            <property name="url">
+           <widget class="QTextBrowser" name="browserHome">
+            <property name="source">
              <url>
               <string>qrc:/docs/homepage.html</string>
              </url>
@@ -147,13 +147,6 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>QWebView</class>
-   <extends>QWidget</extends>
-   <header>QtWebKitWidgets/QWebView</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="resources/resources.qrc"/>
  </resources>

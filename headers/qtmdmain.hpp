@@ -6,7 +6,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QCheckBox>
-#include <QWebView>
+#include <QTextBrowser>
 #include <QtNetwork/QSslSocket>
 #include <map>
 #include "MessageEdit.hpp"
@@ -66,7 +66,7 @@ private:
         QString name;
         QWidget *tab;
         QVBoxLayout *layout;
-        QWebView *web;
+        QTextBrowser *browser;
     };
 
     Ui::QtmdMain *ui;

@@ -10,7 +10,7 @@
 #include <functional>
 #include <QMessageBox>
 #include <QCryptographicHash>
-#include <QWebFrame>
+#include <QScrollBar>
 #define DMsg(x) QMessageBox::information(this, QString(), x)
 
 QtmdMain::QtmdMain(QWidget *parent) :
@@ -220,8 +220,8 @@ void QtmdMain::add_message()
     {
         messages_hashes.insert(std::make_pair(read_message.header.utc_time, hash_str));
         auto tab = tabs.find(read_message.header.group);
-        tab->second.web->setHtml(generate_html(read_message.header.group));
-        tab->second.web->page()->mainFrame()->setScrollBarValue(Qt::Vertical, tab->second.web->page()->mainFrame()->scrollBarMaximum(Qt::Vertical));
+        tab->second.browser->setHtml(generate_html(read_message.header.group));
+        tab->second.browser->verticalScrollBar()->setValue(tab->second.browser->verticalScrollBar()->maximum());
     }
 }
 
@@ -281,8 +281,8 @@ void QtmdMain::create_tab()
     tab.name = QString::fromStdString(read_message.body);
     tab.tab = new QWidget(ui->tabs);
     tab.layout = new QVBoxLayout(tab.tab);
-    tab.web = new QWebView(tab.tab);
-    tab.layout->addWidget(tab.web);
+    tab.browser = new QTextBrowser(tab.tab);
+    tab.layout->addWidget(tab.browser);
     tab.tab_index = ui->tabs->addTab(tab.tab, tab.name);
     tabs.insert(std::make_pair(tab.gid, tab));
     tab_gid.insert(std::make_pair(tab.tab_index, tab.gid));

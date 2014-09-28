@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui webkitwidgets network
+QT       += core gui network
 
 QMAKE_CXXFLAGS += -std=c++11
 
