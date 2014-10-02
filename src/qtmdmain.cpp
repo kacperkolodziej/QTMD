@@ -16,11 +16,12 @@
 QtmdMain::QtmdMain(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::QtmdMain),
-    socket(nullptr),
-    btnCert(new QToolButton),
-    layCert(new QHBoxLayout(ui->txtAddress))
+    socket(nullptr)
 {
     ui->setupUi(this);
+
+    btnCert = new QToolButton(this);
+    layCert = new QHBoxLayout(ui->txtAddress);
 
     msgEdit = new MessageEdit;
     msgEdit->setEnterProcess(true);
