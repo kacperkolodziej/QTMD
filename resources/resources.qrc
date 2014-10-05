@@ -8,6 +8,7 @@
         <file>homepage.html</file>
     </qresource>
     <qresource prefix="/certs">
-        <file>TamanduaCA.pem</file>
+        <file>certs/RootCA.pem</file>
+        <file>certs/TamanduaCA.pem</file>
     </qresource>
 </RCC>

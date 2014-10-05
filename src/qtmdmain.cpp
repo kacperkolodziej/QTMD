@@ -115,6 +115,9 @@ void QtmdMain::on_btnConnect_clicked()
     if (socket == nullptr)
     {
         socket = new QSslSocket(this);
+        foreach (const QSslCertificate &cert, QSslCertificate::fromPath(":/certs/*.pem", QSsl::Pem, QRegExp::Wildcard)) {
+            socket->addCaCertificate(cert);
+        }
         connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(socketChangeState(QAbstractSocket::SocketState)));
         connect(socket, SIGNAL(encrypted()), this, SLOT(socketIsEncrypted()));
         connect(socket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(socketSslErrorsOccurred(QList<QSslError>)));

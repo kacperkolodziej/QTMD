@@ -34,7 +34,7 @@
       <item>
        <widget class="QLineEdit" name="txtAddress">
         <property name="text">
-         <string notr="true">s1.tmnd.net</string>
+         <string notr="true">talk.tmnd.net</string>
         </property>
        </widget>
       </item>
