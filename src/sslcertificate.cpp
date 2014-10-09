@@ -24,7 +24,8 @@ void SSLCertificate::setCertificateChain(QList<QSslCertificate> p_chain)
     for (int i = 0; i < chain.size(); ++i)
     {
         const QSslCertificate &cert = chain.at(i);
-        ui->certificates->addItem(QString("%1 (%2)")
+        ui->certificates->addItem(QString("%1%2 (%3)")
+                                   .arg(!i ? QString() : QString("Issuer: "))
                                    .arg(cert.subjectInfo(QSslCertificate::Organization).join(' '))
                                    .arg(cert.subjectInfo(QSslCertificate::CommonName).join(' '))
                                   );
