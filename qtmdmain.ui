@@ -23,7 +23,7 @@
      <number>12</number>
     </property>
     <item>
-     <layout class="QHBoxLayout" name="layConnect" stretch="1,4,1,2,2">
+     <layout class="QHBoxLayout" name="layConnect" stretch="1,4,1,2,2,0">
       <item>
        <widget class="QLabel" name="lblAddress">
         <property name="text">
@@ -62,6 +62,20 @@
        <widget class="QPushButton" name="btnConnect">
         <property name="text">
          <string>Connect</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="btnDisconnect">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/resources.qrc">
+          <normaloff>:/imgs/close_connection.png</normaloff>:/imgs/close_connection.png</iconset>
         </property>
        </widget>
       </item>

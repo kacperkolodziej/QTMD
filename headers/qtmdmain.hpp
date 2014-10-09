@@ -38,6 +38,8 @@ private slots:
     void btnSendClicked();
     void btnCertClicked();
 
+    void on_btnDisconnect_clicked();
+
 private:
     void read_header();
     void read_body();

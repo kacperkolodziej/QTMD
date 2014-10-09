@@ -51,6 +51,7 @@ QtmdMain::QtmdMain(QWidget *parent) :
 
     connect(btnCert, SIGNAL(clicked()), this, SLOT(btnCertClicked()));
     setupColors();
+    updateUi();
 }
 
 QtmdMain::~QtmdMain()
@@ -61,9 +62,10 @@ QtmdMain::~QtmdMain()
 void QtmdMain::updateUi()
 {
     bool connected = socket && socket->state() == QAbstractSocket::ConnectedState;
-    bool unconnected = socket->state() != QAbstractSocket::ConnectedState;
+    bool unconnected = !socket || socket->state() == QAbstractSocket::UnconnectedState;
 
     ui->btnConnect->setEnabled(unconnected && !ui->txtAddress->text().isEmpty());
+    ui->btnDisconnect->setEnabled(connected);
     ui->txtAddress->setReadOnly(unconnected);
     ui->txtAddress->setFocusPolicy(unconnected ? Qt::StrongFocus : Qt::NoFocus);
     ui->spinPort->setReadOnly(unconnected);
@@ -131,16 +133,27 @@ void QtmdMain::on_btnConnect_clicked()
 void QtmdMain::socketChangeState(QAbstractSocket::SocketState state)
 {
     updateUi();
-    if (state == QAbstractSocket::ConnectedState)
+    ui->statusBar->clearMessage();
+    if (state == QAbstractSocket::UnconnectedState)
+    {
+        ui->txtAddress->setPalette(QPalette());
+        ui->txtAddress->setFocus();
+    } else if (state == QAbstractSocket::HostLookupState)
+    {
+        ui->statusBar->showMessage(QString("Looking for server... please wait..."));
+    } else if (state == QAbstractSocket::ConnectingState)
+    {
+        ui->statusBar->showMessage(QString("Connecting to server... please wait..."));
+    } else if (state == QAbstractSocket::ConnectedState)
     {
         QPalette palette;
         palette.setColor(QPalette::Base, QColor(255, 255, 192));
         ui->txtAddress->setPalette(palette);
         btnCert->show();
+        ui->statusBar->showMessage(QString("Connected!"));
     } else if (state == QAbstractSocket::UnconnectedState)
     {
-        ui->txtAddress->setPalette(QPalette());
-        ui->txtAddress->setFocus();
+        ui->statusBar->showMessage(QString("Disconnected"));
     }
 }
 
@@ -352,4 +365,13 @@ QString QtmdMain::generate_html(tamandua::id_number_t gid)
         }
     }
     return html;
+}
+
+void QtmdMain::on_btnDisconnect_clicked()
+{
+    if (socket->state() == QAbstractSocket::ConnectedState)
+    {
+        socket->disconnectFromHost();
+        updateUi();
+    }
 }
