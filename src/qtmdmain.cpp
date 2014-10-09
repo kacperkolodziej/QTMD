@@ -253,6 +253,7 @@ void QtmdMain::set_users()
     QString all_users = QString::fromStdString(read_message.body);
     QStringList users_list = all_users.split(';', QString::SkipEmptyParts);
     ui->listUsers->clear();
+    users.clear();
     foreach (const QString user, users_list)
     {
         QStringList user_data = user.split(':');
@@ -268,6 +269,7 @@ void QtmdMain::set_rooms()
     QString all_rooms = QString::fromStdString(read_message.body);
     QStringList rooms_list = all_rooms.split(';', QString::SkipEmptyParts);
     ui->listRooms->clear();
+    rooms.clear();
     foreach (const QString room, rooms_list)
     {
         QStringList room_data = room.split(':');
