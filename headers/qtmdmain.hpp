@@ -50,6 +50,7 @@ private:
 
     void create_tab();
     void remove_tab();
+    void clear_tabs();
 
     QString generate_html(tamandua::id_number_t);
 
