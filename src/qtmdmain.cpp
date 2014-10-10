@@ -68,7 +68,7 @@ void QtmdMain::updateUi()
     ui->btnDisconnect->setEnabled(connected);
     ui->txtAddress->setReadOnly(unconnected);
     ui->txtAddress->setFocusPolicy(unconnected ? Qt::StrongFocus : Qt::NoFocus);
-    ui->spinPort->setReadOnly(unconnected);
+    ui->spinPort->setReadOnly(connected);
 
     msgEdit->setDisabled(unconnected);
     btnSend->setDisabled(unconnected);
