@@ -3,6 +3,7 @@
 #include "sslerrors.hpp"
 #include "ui_qtmdmain.h"
 #include "MessageEdit.hpp"
+#include "GroupWidget.hpp"
 #include "tamandua/message_composer.hpp"
 #include "tamandua/message_buffer.hpp"
 #include <string>
@@ -61,20 +62,25 @@ QtmdMain::~QtmdMain()
 
 void QtmdMain::updateUi()
 {
-    bool connected = socket && socket->state() == QAbstractSocket::ConnectedState;
-    bool unconnected = !socket || socket->state() == QAbstractSocket::UnconnectedState;
-
-    ui->btnConnect->setEnabled(unconnected && !ui->txtAddress->text().isEmpty());
-    ui->btnDisconnect->setEnabled(connected);
-    ui->txtAddress->setReadOnly(unconnected);
-    ui->txtAddress->setFocusPolicy(unconnected ? Qt::StrongFocus : Qt::NoFocus);
-    ui->spinPort->setReadOnly(connected);
-
-    msgEdit->setDisabled(unconnected);
-    btnSend->setDisabled(unconnected);
-
-    if (connected)
-        msgEdit->setFocus();
+    if (socket && socket->state() == QAbstractSocket::ConnectedState)
+    {
+        ui->btnConnect->setEnabled(false);
+        ui->btnDisconnect->setEnabled(true);
+        ui->txtAddress->setReadOnly(true);
+        ui->spinPort->setReadOnly(true);
+        msgEdit->setDisabled(false);
+        btnSend->setDisabled(false);
+        btnCert->show();
+    } else
+    {
+        ui->btnConnect->setEnabled(true);
+        ui->btnDisconnect->setEnabled(false);
+        ui->txtAddress->setReadOnly(false);
+        ui->spinPort->setReadOnly(false);
+        msgEdit->setDisabled(true);
+        btnSend->setDisabled(true);
+        btnCert->hide();
+    }
 }
 
 void QtmdMain::setupColors()
@@ -238,8 +244,8 @@ void QtmdMain::add_message()
     {
         messages_hashes.insert(std::make_pair(read_message.header.utc_time, hash_str));
         auto tab = tabs.find(read_message.header.group);
-        tab->second.browser->setHtml(generate_html(read_message.header.group));
-        tab->second.browser->verticalScrollBar()->setValue(tab->second.browser->verticalScrollBar()->maximum());
+        tab->second->getTextBrowser()->setHtml(generate_html(read_message.header.group));
+        tab->second->getTextBrowser()->verticalScrollBar()->setValue(tab->second->getTextBrowser()->verticalScrollBar()->maximum());
     }
 }
 
@@ -247,8 +253,7 @@ void QtmdMain::send_message()
 {
     std::string msg_body = msgEdit->toPlainText().toStdString();
     int tab_index = ui->tabs->currentIndex();
-    auto tab = tab_gid.find(tab_index);
-    tamandua::id_number_t gid = tab->second;
+    tamandua::id_number_t gid = reinterpret_cast<GroupWidget*>(ui->tabs->currentWidget())->getGid();
     tamandua::message_composer msgc(tamandua::standard_message, msg_body, gid);
     tamandua::message msg = msgc();
     tamandua::message_buffer msg_buf(msg.header, msg.body);
@@ -296,17 +301,10 @@ void QtmdMain::set_rooms()
 
 void QtmdMain::create_tab()
 {
-    tab_elements tab;
-    tab.gid = read_message.header.group;
-    tab.name = QString::fromStdString(read_message.body);
-    tab.tab = new QWidget(ui->tabs);
-    tab.layout = new QVBoxLayout(tab.tab);
-    tab.browser = new QTextBrowser(tab.tab);
-    tab.layout->addWidget(tab.browser);
-    tab.tab_index = ui->tabs->addTab(tab.tab, tab.name);
-    tabs.insert(std::make_pair(tab.gid, tab));
-    tab_gid.insert(std::make_pair(tab.tab_index, tab.gid));
-    ui->tabs->setCurrentIndex(tab.tab_index);
+    GroupWidget *tab = new GroupWidget(ui->tabs, read_message.header.group, QString::fromStdString(read_message.body));
+    int index = ui->tabs->addTab(tab, tab->getName());
+    tabs.insert(std::make_pair(tab->getGid(), tab));
+    ui->tabs->setCurrentIndex(index);
 }
 
 void QtmdMain::remove_tab()
@@ -317,19 +315,17 @@ void QtmdMain::remove_tab()
         DMsg("Tab not found!");
         return;
     }
-
-    tab_elements tab = tab_it->second;
-    ui->tabs->removeTab(tab.tab_index);
+    int index = ui->tabs->indexOf(tab_it->second);
+    ui->tabs->removeTab(index);
     tabs.erase(tab_it);
-    tab_gid.erase(tab.gid);
 }
 
 void QtmdMain::clear_tabs()
 {
     for (auto tab_it = tabs.begin(); tab_it != tabs.end(); ++tab_it)
     {
-        ui->tabs->removeTab(tab_it->second.tab_index);
-        tab_gid.erase(tab_it->second.gid);
+        int index = ui->tabs->indexOf(tab_it->second);
+        ui->tabs->removeTab(index);
         tabs.erase(tab_it);
     }
 }

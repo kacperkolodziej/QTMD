@@ -20,12 +20,14 @@ SOURCES += main.cpp\
         src/qtmdmain.cpp \
     src/MessageEdit.cpp \
     src/sslcertificate.cpp \
-    src/sslerrors.cpp
+    src/sslerrors.cpp \
+    src/GroupWidget.cpp
 
 HEADERS  += headers/qtmdmain.hpp \
     headers/MessageEdit.hpp \
     headers/sslcertificate.hpp \
-    headers/sslerrors.hpp
+    headers/sslerrors.hpp \
+    headers/GroupWidget.hpp
 
 FORMS    += qtmdmain.ui \
     sslcertificate.ui \

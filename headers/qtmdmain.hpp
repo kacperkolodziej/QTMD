@@ -10,6 +10,7 @@
 #include <QtNetwork/QSslSocket>
 #include <map>
 #include "MessageEdit.hpp"
+#include "GroupWidget.hpp"
 #include "tamandua/message.hpp"
 
 namespace Ui {
@@ -63,14 +64,6 @@ private:
                 msg(p_msg)
         {}
     };
-    struct tab_elements {
-        tamandua::id_number_t gid;
-        int tab_index;
-        QString name;
-        QWidget *tab;
-        QVBoxLayout *layout;
-        QTextBrowser *browser;
-    };
 
     Ui::QtmdMain *ui;
     QSslSocket *socket;
@@ -90,8 +83,7 @@ private:
     std::map<tamandua::id_number_t, QString> users;
     std::map<tamandua::id_number_t, QString> rooms;
 
-    std::map<tamandua::id_number_t, tab_elements> tabs;
-    std::map<int, tamandua::id_number_t> tab_gid;
+    std::map<tamandua::id_number_t, GroupWidget*> tabs;
 
     bool ignoreSslErr;
 };
