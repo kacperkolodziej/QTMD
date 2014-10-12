@@ -46,6 +46,8 @@ private slots:
 
     void on_tabs_tabBarDoubleClicked(int index);
 
+    void on_listUsers_itemDoubleClicked(QListWidgetItem *item);
+
 private:
     void read_header();
     void read_body();

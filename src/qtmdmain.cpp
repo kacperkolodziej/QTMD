@@ -406,7 +406,7 @@ void QtmdMain::on_tabs_tabBarDoubleClicked(int index)
     QString groupname = tab->getName();
     tamandua::id_number_t gid = tab->getGid();
     QMessageBox::StandardButton close = QMessageBox::question(this, QString("Are you sure?"),
-                                                              QString("Do you want to leave \"%1\" group?").arg(groupname),
+                                                              QString("Do you want to leave group \"%1\"?").arg(groupname),
                                                               QMessageBox::Yes | QMessageBox::No);
 
     if (close == QMessageBox::Yes)
@@ -418,4 +418,14 @@ void QtmdMain::on_tabs_tabBarDoubleClicked(int index)
         if (socket->write(msg_buf.get_buffer().get(), msg_buf.get_buffer_size()) != static_cast<qint64>(msg_buf.get_buffer_size()))
             DMsg("Error while sending command!");
     }
+}
+
+void QtmdMain::on_listUsers_itemDoubleClicked(QListWidgetItem *item)
+{
+    tamandua::message_composer msgc(tamandua::standard_message);
+    msgc << command_char << "conference \"" << item->text().toStdString() << "\"";
+    tamandua::message msg = msgc();
+    tamandua::message_buffer msg_buf(msg.header, msg.body);
+    if (socket->write(msg_buf.get_buffer().get(), msg_buf.get_buffer_size()) != static_cast<qint64>(msg_buf.get_buffer_size()))
+        DMsg("Error while sending command!");
 }
