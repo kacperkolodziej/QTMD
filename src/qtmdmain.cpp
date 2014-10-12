@@ -24,7 +24,7 @@ QtmdMain::QtmdMain(QWidget *parent) :
     btnCert = new QToolButton(this);
     layCert = new QHBoxLayout(ui->txtAddress);
 
-    msgEdit = new MessageEdit;
+    msgEdit = new MessageEdit(this);
     msgEdit->setEnterProcess(true);
     msgEdit->setEnterCallback(std::bind(&QtmdMain::send_message, this));
     ui->gridInput->addWidget(msgEdit, 0, 0);
