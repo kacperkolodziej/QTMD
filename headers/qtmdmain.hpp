@@ -29,6 +29,7 @@ public:
     void setupColors();
 
     void ignoreSslErrors(bool);
+    void keyPressEvent(QKeyEvent*);
     QSslSocket * getSocket();
 
 private slots:

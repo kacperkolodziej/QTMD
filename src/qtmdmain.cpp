@@ -429,3 +429,20 @@ void QtmdMain::on_listUsers_itemDoubleClicked(QListWidgetItem *item)
     if (socket->write(msg_buf.get_buffer().get(), msg_buf.get_buffer_size()) != static_cast<qint64>(msg_buf.get_buffer_size()))
         DMsg("Error while sending command!");
 }
+
+void QtmdMain::keyPressEvent(QKeyEvent *event)
+{
+    int index_modulo = ui->tabs->count();
+    int index = ui->tabs->currentIndex();
+    auto key = event->key();
+    if (key == Qt::Key_Left || key == Qt::Key_PageUp)
+    {
+        if (index > 0)
+            ui->tabs->setCurrentIndex(index-1);
+        else
+            ui->tabs->setCurrentIndex(index_modulo-1);
+    } else if (key == Qt::Key_Right || key == Qt::Key_PageDown)
+    {
+        ui->tabs->setCurrentIndex((index + 1) % index_modulo);
+    }
+}
