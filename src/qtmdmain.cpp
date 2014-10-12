@@ -224,6 +224,9 @@ void QtmdMain::read_body()
             create_tab();
         else if (type == tamandua::group_leave_message)
             remove_tab();
+        else if (type == tamandua::init_message && read_message.body.length() >= 1)
+            command_char = read_message.body[0];
+
     }
 }
 
@@ -381,5 +384,38 @@ void QtmdMain::on_btnDisconnect_clicked()
     {
         socket->disconnectFromHost();
         updateUi();
+    }
+}
+
+void QtmdMain::on_listRooms_itemDoubleClicked(QListWidgetItem *item)
+{
+    tamandua::message_composer msgc(tamandua::standard_message);
+    msgc << command_char << "room \"" << item->text().toStdString() << "\"";
+    tamandua::message msg = msgc();
+    tamandua::message_buffer msg_buf(msg.header, msg.body);
+    if (socket->write(msg_buf.get_buffer().get(), msg_buf.get_buffer_size()) != static_cast<qint64>(msg_buf.get_buffer_size()))
+        DMsg("Error while sending command!");
+}
+
+void QtmdMain::on_tabs_tabBarDoubleClicked(int index)
+{
+    if (index == 0)
+        return;
+
+    GroupWidget* tab = reinterpret_cast<GroupWidget*>(ui->tabs->widget(index));
+    QString groupname = tab->getName();
+    tamandua::id_number_t gid = tab->getGid();
+    QMessageBox::StandardButton close = QMessageBox::question(this, QString("Are you sure?"),
+                                                              QString("Do you want to leave \"%1\" group?").arg(groupname),
+                                                              QMessageBox::Yes | QMessageBox::No);
+
+    if (close == QMessageBox::Yes)
+    {
+        tamandua::message_composer msgc(tamandua::standard_message, gid);
+        msgc << command_char << "leave";
+        tamandua::message msg = msgc();
+        tamandua::message_buffer msg_buf(msg.header, msg.body);
+        if (socket->write(msg_buf.get_buffer().get(), msg_buf.get_buffer_size()) != static_cast<qint64>(msg_buf.get_buffer_size()))
+            DMsg("Error while sending command!");
     }
 }

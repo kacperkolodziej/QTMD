@@ -8,6 +8,7 @@
 #include <QCheckBox>
 #include <QTextBrowser>
 #include <QtNetwork/QSslSocket>
+#include <QListWidget>
 #include <map>
 #include "MessageEdit.hpp"
 #include "GroupWidget.hpp"
@@ -40,6 +41,10 @@ private slots:
     void btnCertClicked();
 
     void on_btnDisconnect_clicked();
+
+    void on_listRooms_itemDoubleClicked(QListWidgetItem *item);
+
+    void on_tabs_tabBarDoubleClicked(int index);
 
 private:
     void read_header();
@@ -84,6 +89,7 @@ private:
     std::map<tamandua::id_number_t, QString> rooms;
 
     std::map<tamandua::id_number_t, GroupWidget*> tabs;
+    char command_char;
 
     bool ignoreSslErr;
 };
