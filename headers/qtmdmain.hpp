@@ -30,6 +30,7 @@ public:
 
     void ignoreSslErrors(bool);
     void keyPressEvent(QKeyEvent*);
+    void closeEvent(QCloseEvent*);
     QSslSocket * getSocket();
 
 private slots:
@@ -42,12 +43,14 @@ private slots:
     void btnCertClicked();
 
     void on_btnDisconnect_clicked();
-
     void on_listRooms_itemDoubleClicked(QListWidgetItem *item);
-
     void on_tabs_tabBarDoubleClicked(int index);
-
     void on_listUsers_itemDoubleClicked(QListWidgetItem *item);
+    void on_actionAbout_QTMD_triggered();
+    void on_actionAbout_Tamandua_triggered();
+    void on_actionAbout_Author_triggered();
+    void on_actionUpdate_QTMD_triggered();
+    void on_actionQuit_triggered();
 
 private:
     void read_header();
@@ -56,6 +59,7 @@ private:
     void send_message();
     void set_users();
     void set_rooms();
+    void disconnect_socket();
 
     void create_tab();
     void remove_tab();

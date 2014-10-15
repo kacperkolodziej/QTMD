@@ -157,8 +157,45 @@
      <height>29</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuQTMD">
+    <property name="title">
+     <string>QTMD</string>
+    </property>
+    <addaction name="actionAbout_QTMD"/>
+    <addaction name="actionAbout_Tamandua"/>
+    <addaction name="actionAbout_Author"/>
+    <addaction name="separator"/>
+    <addaction name="actionUpdate_QTMD"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <addaction name="menuQTMD"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionAbout_QTMD">
+   <property name="text">
+    <string>About QTMD</string>
+   </property>
+  </action>
+  <action name="actionAbout_Tamandua">
+   <property name="text">
+    <string>About Tamandua</string>
+   </property>
+  </action>
+  <action name="actionAbout_Author">
+   <property name="text">
+    <string>Author</string>
+   </property>
+  </action>
+  <action name="actionUpdate_QTMD">
+   <property name="text">
+    <string>Update QTMD</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

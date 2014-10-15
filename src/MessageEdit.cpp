@@ -30,7 +30,6 @@ void MessageEdit::keyPressEvent(QKeyEvent *event)
         last_sent_it = last_sent.rend();
         setPalette(new_msg);
         clear();
-        update();
     } else if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down)
     {
 

@@ -12,6 +12,9 @@
 #include <QMessageBox>
 #include <QCryptographicHash>
 #include <QScrollBar>
+#include <QDesktopServices>
+#include <QUrl>
+
 #define DMsg(x) QMessageBox::information(this, QString(), x)
 
 QtmdMain::QtmdMain(QWidget *parent) :
@@ -255,7 +258,6 @@ void QtmdMain::add_message()
 void QtmdMain::send_message()
 {
     std::string msg_body = msgEdit->toPlainText().toStdString();
-    int tab_index = ui->tabs->currentIndex();
     tamandua::id_number_t gid = reinterpret_cast<GroupWidget*>(ui->tabs->currentWidget())->getGid();
     tamandua::message_composer msgc(tamandua::standard_message, msg_body, gid);
     tamandua::message msg = msgc();
@@ -333,6 +335,11 @@ void QtmdMain::clear_tabs()
     }
 }
 
+void QtmdMain::disconnect_socket()
+{
+    socket->disconnectFromHost();
+}
+
 QString QtmdMain::generate_html(tamandua::id_number_t gid)
 {
     auto tab = tabs.find(gid);
@@ -382,8 +389,14 @@ void QtmdMain::on_btnDisconnect_clicked()
 {
     if (socket->state() == QAbstractSocket::ConnectedState)
     {
-        socket->disconnectFromHost();
-        updateUi();
+        QMessageBox::StandardButton sure = QMessageBox::question(this, QString("Are you sure?"),
+                                                                 QString("Do you want to close connection?"),
+                                                                 QMessageBox::Yes | QMessageBox::No);
+        if (sure == QMessageBox::Yes)
+        {
+            disconnect_socket();
+            updateUi();
+        }
     }
 }
 
@@ -444,5 +457,50 @@ void QtmdMain::keyPressEvent(QKeyEvent *event)
     } else if (key == Qt::Key_Right || key == Qt::Key_PageDown)
     {
         ui->tabs->setCurrentIndex((index + 1) % index_modulo);
+    } else
+    {
+        QMainWindow::keyPressEvent(event);
     }
+}
+
+void QtmdMain::closeEvent(QCloseEvent *event)
+{
+    if (socket && socket->state() == QAbstractSocket::ConnectedState)
+    {
+        event->ignore();
+        QMessageBox::StandardButton close = QMessageBox::question(this, QString("Are you sure?"),
+                                                                  QString("Do you want to close QTMD? You will lose your connection!"),
+                                                                  QMessageBox::Yes | QMessageBox::No);
+        if (close == QMessageBox::Yes)
+        {
+            event->accept();
+        }
+    }
+}
+
+void QtmdMain::on_actionAbout_QTMD_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://tmnd.net/tamandua"));
+}
+
+
+void QtmdMain::on_actionAbout_Tamandua_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://tmnd.net/qtmd"));
+}
+
+
+void QtmdMain::on_actionAbout_Author_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://tmnd.net/author"));
+}
+
+void QtmdMain::on_actionUpdate_QTMD_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://tmnd.net/update"));
+}
+
+void QtmdMain::on_actionQuit_triggered()
+{
+    close();
 }
