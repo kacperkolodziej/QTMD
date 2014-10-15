@@ -13,7 +13,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = QTMD
 TEMPLATE = app
 
-INCLUDEPATH += headers
+INCLUDEPATH += headers \
+    headers\tamandua
 DEPENDPATH += headers
 
 SOURCES += main.cpp\
@@ -23,17 +24,31 @@ SOURCES += main.cpp\
     src/sslerrors.cpp \
     src/GroupWidget.cpp
 
+win32: SOURCES += src/tamandua/message_buffer.cpp \
+    src/tamandua/message_composer.cpp \
+    src/tamandua/version.cpp
+
 HEADERS  += headers/qtmdmain.hpp \
     headers/MessageEdit.hpp \
     headers/sslcertificate.hpp \
     headers/sslerrors.hpp \
     headers/GroupWidget.hpp
 
+win32: HEADERS += headers/tamandua/message.hpp \
+    headers/tamandua/message_buffer.hpp \
+    headers/tamandua/message_composer.hpp \
+    headers/tamandua/message_header.hpp \
+    headers/tamandua/types.hpp \
+    headers/tamandua/version.hpp \
+    headers/tamandua/version_config.hpp
+
 FORMS    += qtmdmain.ui \
     sslcertificate.ui \
     sslerrors.ui
 
-unix|win32: LIBS += -ltamandua_msg -lssl -lcrypto
+unix: LIBS += -ltamandua_msg -lssl -lcrypto
+win32: LIBS += -L"C:/OpenSSL-Win32/lib" -llibeay32
+
 
 RESOURCES += \
     resources/resources.qrc
