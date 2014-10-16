@@ -9,6 +9,7 @@
 #include <QTextBrowser>
 #include <QtNetwork/QSslSocket>
 #include <QListWidget>
+#include <QSystemTrayIcon>
 #include <map>
 #include "MessageEdit.hpp"
 #include "GroupWidget.hpp"
@@ -64,6 +65,7 @@ private:
     void create_tab();
     void remove_tab();
     void clear_tabs();
+    void clear_message_cache();
 
     QString generate_html(tamandua::id_number_t);
 
@@ -84,6 +86,7 @@ private:
     QGridLayout *laySend;
     QToolButton *btnSend;
     MessageEdit *msgEdit;
+    QSystemTrayIcon *trayIcon;
 
     QString nickColor[10], infoColor, warningColor, errorColor;
     QString messageHtml, infoHtml, warningHtml, errorHtml;

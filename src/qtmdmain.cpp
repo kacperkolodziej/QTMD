@@ -14,6 +14,8 @@
 #include <QScrollBar>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QSound>
+#include <QSystemTrayIcon>
 
 #define DMsg(x) QMessageBox::information(this, QString(), x)
 
@@ -52,6 +54,9 @@ QtmdMain::QtmdMain(QWidget *parent) :
     layCert->addStretch();
     layCert->addWidget(btnCert);
     ui->txtAddress->setLayout(layCert);
+
+    trayIcon = new QSystemTrayIcon(QIcon(":/imgs/icon.ico"), this);
+    trayIcon->setVisible(true);
 
     connect(btnCert, SIGNAL(clicked()), this, SLOT(btnCertClicked()));
     setupColors();
@@ -170,6 +175,7 @@ void QtmdMain::socketIsEncrypted()
 {
     QMessageBox::information(this, QString("Signal"), QString("Secure connection established!"));
     clear_tabs();
+    clear_message_cache();
 }
 
 void QtmdMain::socketReadyToRead()
@@ -253,6 +259,11 @@ void QtmdMain::add_message()
         tab->second->getTextBrowser()->setHtml(generate_html(read_message.header.group));
         tab->second->getTextBrowser()->verticalScrollBar()->setValue(tab->second->getTextBrowser()->verticalScrollBar()->maximum());
     }
+    if (!isActiveWindow())
+    {
+        QSound::play(QString(":/sounds/new_message.wav"));
+        trayIcon->showMessage(QString("New message"), QString("You have new message!"), QSystemTrayIcon::Information, 3500);
+    }
 }
 
 void QtmdMain::send_message()
@@ -333,6 +344,12 @@ void QtmdMain::clear_tabs()
         ui->tabs->removeTab(index);
         tabs.erase(tab_it);
     }
+}
+
+void QtmdMain::clear_message_cache()
+{
+    messages.clear();
+    messages_hashes.clear();
 }
 
 void QtmdMain::disconnect_socket()

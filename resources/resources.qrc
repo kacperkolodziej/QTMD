@@ -12,4 +12,7 @@
         <file>certs/RootCA.pem</file>
         <file>certs/TamanduaCA.pem</file>
     </qresource>
+    <qresource prefix="/sounds">
+        <file>new_message.wav</file>
+    </qresource>
 </RCC>
