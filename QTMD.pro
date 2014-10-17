@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     src/MessageEdit.cpp \
     src/sslcertificate.cpp \
     src/sslerrors.cpp \
-    src/GroupWidget.cpp
+    src/GroupWidget.cpp \
+    src/version.cpp
 
 win32: SOURCES += src/tamandua/message_buffer.cpp \
     src/tamandua/message_composer.cpp \
@@ -32,7 +33,8 @@ HEADERS  += headers/qtmdmain.hpp \
     headers/MessageEdit.hpp \
     headers/sslcertificate.hpp \
     headers/sslerrors.hpp \
-    headers/GroupWidget.hpp
+    headers/GroupWidget.hpp \
+    headers/version.hpp
 
 win32: HEADERS += headers/tamandua/message.hpp \
     headers/tamandua/message_buffer.hpp \

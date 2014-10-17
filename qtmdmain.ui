@@ -161,31 +161,23 @@
     <property name="title">
      <string>QTMD</string>
     </property>
-    <addaction name="actionAbout_QTMD"/>
-    <addaction name="actionAbout_Tamandua"/>
-    <addaction name="actionAbout_Author"/>
-    <addaction name="separator"/>
     <addaction name="actionUpdate_QTMD"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Information</string>
+    </property>
+    <addaction name="actionAuthor"/>
+    <addaction name="actionLicense"/>
+    <addaction name="actionAbout"/>
+    <addaction name="actionVersion"/>
+    <addaction name="actionHelp"/>
+   </widget>
    <addaction name="menuQTMD"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionAbout_QTMD">
-   <property name="text">
-    <string>About QTMD</string>
-   </property>
-  </action>
-  <action name="actionAbout_Tamandua">
-   <property name="text">
-    <string>About Tamandua</string>
-   </property>
-  </action>
-  <action name="actionAbout_Author">
-   <property name="text">
-    <string>Author</string>
-   </property>
-  </action>
   <action name="actionUpdate_QTMD">
    <property name="text">
     <string>Update QTMD</string>
@@ -194,6 +186,31 @@
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionVersion">
+   <property name="text">
+    <string>Version</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionAuthor">
+   <property name="text">
+    <string>Author</string>
+   </property>
+  </action>
+  <action name="actionLicense">
+   <property name="text">
+    <string>License</string>
    </property>
   </action>
  </widget>

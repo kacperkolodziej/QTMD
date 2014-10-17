@@ -4,8 +4,10 @@
 #include "ui_qtmdmain.h"
 #include "MessageEdit.hpp"
 #include "GroupWidget.hpp"
+#include "version.hpp"
 #include "tamandua/message_composer.hpp"
 #include "tamandua/message_buffer.hpp"
+#include "tamandua/version.hpp"
 #include <string>
 #include <memory>
 #include <functional>
@@ -509,23 +511,6 @@ void QtmdMain::closeEvent(QCloseEvent *event)
     }
 }
 
-void QtmdMain::on_actionAbout_QTMD_triggered()
-{
-    QDesktopServices::openUrl(QUrl("https://tmnd.net/tamandua"));
-}
-
-
-void QtmdMain::on_actionAbout_Tamandua_triggered()
-{
-    QDesktopServices::openUrl(QUrl("https://tmnd.net/qtmd"));
-}
-
-
-void QtmdMain::on_actionAbout_Author_triggered()
-{
-    QDesktopServices::openUrl(QUrl("https://tmnd.net/author"));
-}
-
 void QtmdMain::on_actionUpdate_QTMD_triggered()
 {
     QDesktopServices::openUrl(QUrl("https://tmnd.net/update"));
@@ -534,4 +519,21 @@ void QtmdMain::on_actionUpdate_QTMD_triggered()
 void QtmdMain::on_actionQuit_triggered()
 {
     close();
+}
+
+void QtmdMain::on_actionAbout_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://tmnd.net/tamandua"));
+}
+
+void QtmdMain::on_actionVersion_triggered()
+{
+    QMessageBox::information(this, QString("Version"), QString("Tamandua lib version: %1\nQTMD version: %2")
+                             .arg(QString::fromStdString(tamandua::get_version_str()))
+                             .arg(version_qstring()));
+}
+
+void QtmdMain::on_actionAuthor_triggered()
+{
+    QMessageBox::information(this, QString("Author"), QString("QTMD and Tamandua had been created by:\n\tKacper Kołodziej\n\tkacper@kolodziej.in\n\tkacperkolodziej.com"));
 }

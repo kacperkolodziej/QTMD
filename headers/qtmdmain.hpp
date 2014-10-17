@@ -47,9 +47,9 @@ private slots:
     void on_listRooms_itemDoubleClicked(QListWidgetItem *item);
     void on_tabs_tabBarDoubleClicked(int index);
     void on_listUsers_itemDoubleClicked(QListWidgetItem *item);
-    void on_actionAbout_QTMD_triggered();
-    void on_actionAbout_Tamandua_triggered();
-    void on_actionAbout_Author_triggered();
+
+    void on_actionAbout_triggered();
+    void on_actionVersion_triggered();
     void on_actionUpdate_QTMD_triggered();
     void on_actionQuit_triggered();
 
@@ -71,6 +71,7 @@ private:
 private slots:
     void refresh_tab_name(int);
 
+    void on_actionAuthor_triggered();
 
 private:
     struct nick_message {
