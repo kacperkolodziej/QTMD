@@ -66,8 +66,11 @@ private:
     void remove_tab();
     void clear_tabs();
     void clear_message_cache();
-
     QString generate_html(tamandua::id_number_t);
+
+private slots:
+    void refresh_tab_name(int);
+
 
 private:
     struct nick_message {

@@ -4,6 +4,7 @@
 #include <QTextBrowser>
 #include <string>
 #include <tamandua/types.hpp>
+#include <tamandua/message.hpp>
 
 class GroupWidget :
         public QWidget

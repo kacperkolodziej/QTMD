@@ -59,6 +59,7 @@ QtmdMain::QtmdMain(QWidget *parent) :
     trayIcon->setVisible(true);
 
     connect(btnCert, SIGNAL(clicked()), this, SLOT(btnCertClicked()));
+    connect(ui->tabs, SIGNAL(currentChanged(int)), this, SLOT(refresh_tab_name(int)));
     setupColors();
     updateUi();
 }
@@ -248,9 +249,13 @@ void QtmdMain::add_message()
     auto iterator = users.find(read_message.header.author);
     QString author;
     if (iterator == users.end())
+    {
         author = "[server]";
-    else
+    } else
+    {
         author = iterator->second;
+    }
+
     auto insp = messages.insert(std::make_pair(hash_str, nick_message(author, read_message)));
     if (insp.second == true)
     {
@@ -258,11 +263,15 @@ void QtmdMain::add_message()
         auto tab = tabs.find(read_message.header.group);
         tab->second->getTextBrowser()->setHtml(generate_html(read_message.header.group));
         tab->second->getTextBrowser()->verticalScrollBar()->setValue(tab->second->getTextBrowser()->verticalScrollBar()->maximum());
-    }
-    if (!isActiveWindow())
-    {
-        QSound::play(QString(":/sounds/new_message.wav"));
-        trayIcon->showMessage(QString("New message"), QString("You have new message!"), QSystemTrayIcon::Information, 3500);
+        if (ui->tabs->currentWidget() != reinterpret_cast<QWidget*>(tab->second))
+        {
+            ui->tabs->setTabText(ui->tabs->indexOf(reinterpret_cast<QWidget*>(tab->second)), QString("* %1").arg(tab->second->getName()));
+        }
+        if (!isActiveWindow())
+        {
+            QSound::play(QString(":/sounds/new_message.wav"));
+            trayIcon->showMessage(QString("New message"), QString("You have new message!"), QSystemTrayIcon::Information, 3500);
+        }
     }
 }
 
@@ -350,6 +359,11 @@ void QtmdMain::clear_message_cache()
 {
     messages.clear();
     messages_hashes.clear();
+}
+
+void QtmdMain::refresh_tab_name(int index)
+{
+    ui->tabs->setTabText(index, reinterpret_cast<GroupWidget*>(ui->tabs->widget(index))->getName());
 }
 
 void QtmdMain::disconnect_socket()
