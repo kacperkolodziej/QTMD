@@ -1,4 +1,4 @@
-#include "MessageEdit.hpp"
+#include "messageedit.hpp"
 #include <QMessageBox>
 
 MessageEdit::MessageEdit(QWidget *parent) :

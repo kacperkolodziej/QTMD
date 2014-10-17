@@ -19,22 +19,22 @@ DEPENDPATH += headers
 
 SOURCES += main.cpp\
         src/qtmdmain.cpp \
-    src/MessageEdit.cpp \
     src/sslcertificate.cpp \
     src/sslerrors.cpp \
-    src/GroupWidget.cpp \
-    src/version.cpp
+    src/version.cpp \
+    src/messageedit.cpp \
+    src/groupwidget.cpp
 
 win32: SOURCES += src/tamandua/message_buffer.cpp \
     src/tamandua/message_composer.cpp \
     src/tamandua/version.cpp
 
 HEADERS  += headers/qtmdmain.hpp \
-    headers/MessageEdit.hpp \
     headers/sslcertificate.hpp \
     headers/sslerrors.hpp \
-    headers/GroupWidget.hpp \
-    headers/version.hpp
+    headers/version.hpp \
+    headers/messageedit.hpp \
+    headers/groupwidget.hpp
 
 win32: HEADERS += headers/tamandua/message.hpp \
     headers/tamandua/message_buffer.hpp \

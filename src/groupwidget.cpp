@@ -1,4 +1,4 @@
-#include "GroupWidget.hpp"
+#include "groupwidget.hpp"
 
 GroupWidget::GroupWidget(QWidget *parent, tamandua::id_number_t gid_, QString name_) :
     QWidget(parent),
