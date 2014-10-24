@@ -2,9 +2,9 @@
 #include "sslcertificate.hpp"
 #include "sslerrors.hpp"
 #include "ui_qtmdmain.h"
-#include "MessageEdit.hpp"
-#include "GroupWidget.hpp"
-#include "version.hpp"
+#include "messageedit.hpp"
+#include "groupwidget.hpp"
+#include "qtmd_version.hpp"
 #include "tamandua/message_composer.hpp"
 #include "tamandua/message_buffer.hpp"
 #include "tamandua/version.hpp"
@@ -536,4 +536,9 @@ void QtmdMain::on_actionVersion_triggered()
 void QtmdMain::on_actionAuthor_triggered()
 {
     QMessageBox::information(this, QString("Author"), QString("QTMD and Tamandua had been created by:\n\tKacper Kołodziej\n\tkacper@kolodziej.in\n\tkacperkolodziej.com"));
+}
+
+void QtmdMain::on_actionLicense_triggered()
+{
+
 }

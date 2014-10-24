@@ -11,8 +11,8 @@
 #include <QListWidget>
 #include <QSystemTrayIcon>
 #include <map>
-#include "MessageEdit.hpp"
-#include "GroupWidget.hpp"
+#include "messageedit.hpp"
+#include "groupwidget.hpp"
 #include "tamandua/message.hpp"
 
 namespace Ui {
@@ -72,6 +72,8 @@ private slots:
     void refresh_tab_name(int);
 
     void on_actionAuthor_triggered();
+
+    void on_actionLicense_triggered();
 
 private:
     struct nick_message {

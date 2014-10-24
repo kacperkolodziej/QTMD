@@ -1,4 +1,4 @@
-#include "version.hpp"
+#include "qtmd_version.hpp"
 #include <cstdint>
 
 static const uint16_t major_version = 0;
