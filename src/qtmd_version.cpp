@@ -2,7 +2,7 @@
 #include <cstdint>
 
 static const uint16_t major_version = 0;
-static const uint16_t minor_version = 1;
+static const uint16_t minor_version = 2;
 static const uint16_t patch_version = 0;
 static const QString info_version = "beta";
 
