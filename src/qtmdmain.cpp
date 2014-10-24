@@ -20,6 +20,7 @@
 #include <QUrl>
 #include <QSound>
 #include <QSystemTrayIcon>
+#include <QRegExp>
 
 #define DMsg(x) QMessageBox::information(this, QString(), x)
 
@@ -403,18 +404,19 @@ QString QtmdMain::generate_html(tamandua::id_number_t gid)
         else
             timeStr = datetime.date().toString("dd/MM/yyyy ") + datetime.time().toString("hh:mm:ss");
 
+        QString msg_body = QString::fromStdString(msg.body);
         if (type == tamandua::standard_message)
         {
-            html += messageHtml.arg(timeStr).arg(nickColor[msg.header.author % 10]).arg(author).arg(QString::fromStdString(msg.body));
+            html += messageHtml.arg(timeStr).arg(nickColor[msg.header.author % 10]).arg(author).arg(msg_body);
         } else if (type == tamandua::info_message)
         {
-            html += infoHtml.arg(timeStr).arg(infoColor).arg(QString::fromStdString(msg.body));
+            html += infoHtml.arg(timeStr).arg(infoColor).arg(msg_body);
         } else if (type == tamandua::warning_message)
         {
-            html += warningHtml.arg(timeStr).arg(warningColor).arg(QString::fromStdString(msg.body));
+            html += warningHtml.arg(timeStr).arg(warningColor).arg(msg_body);
         } else if (type == tamandua::error_message)
         {
-            html += errorHtml.arg(timeStr).arg(errorColor).arg(QString::fromStdString(msg.body));
+            html += errorHtml.arg(timeStr).arg(errorColor).arg(msg_body);
         }
     }
     return html;
