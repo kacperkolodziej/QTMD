@@ -6,6 +6,7 @@
 #include "groupwidget.hpp"
 #include "qtmd_version.hpp"
 #include "htmlviewer.hpp"
+#include "loginwindow.hpp"
 #include "tamandua/message_composer.hpp"
 #include "tamandua/message_buffer.hpp"
 #include "tamandua/version.hpp"
@@ -556,4 +557,13 @@ void QtmdMain::on_actionHelp_triggered()
     viewer->setData(QString("Help"), QUrl(QString("qrc:/docs/help.html")));
     viewer->exec();
     viewer->deleteLater();
+}
+
+void QtmdMain::on_actionLogin_triggered()
+{
+    LoginWindow *login = new LoginWindow(this);
+    login->setSocket(socket);
+    login->setCommand(QChar(command_char) + QString("auth \"%1\" \"%2\""));
+    login->exec();
+    login->deleteLater();
 }

@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     src/messageedit.cpp \
     src/groupwidget.cpp \
     src/qtmd_version.cpp \
-    src/htmlviewer.cpp
+    src/htmlviewer.cpp \
+    src/loginwindow.cpp
 
 win32: SOURCES += src/tamandua/message_buffer.cpp \
     src/tamandua/message_composer.cpp \
@@ -36,7 +37,8 @@ HEADERS  += headers/qtmdmain.hpp \
     headers/messageedit.hpp \
     headers/groupwidget.hpp \
     headers/qtmd_version.hpp \
-    headers/htmlviewer.hpp
+    headers/htmlviewer.hpp \
+    headers/loginwindow.hpp
 
 win32: HEADERS += headers/tamandua/message.hpp \
     headers/tamandua/message_buffer.hpp \
@@ -49,7 +51,8 @@ win32: HEADERS += headers/tamandua/message.hpp \
 FORMS    += forms/qtmdmain.ui \
     forms/sslcertificate.ui \
     forms/sslerrors.ui \
-    forms/htmlviewer.ui
+    forms/htmlviewer.ui \
+    forms/loginwindow.ui
 
 unix: LIBS += -ltamandua_msg -lssl -lcrypto
 win32: LIBS += -L"C:/OpenSSL-Win32/lib" -llibeay32
