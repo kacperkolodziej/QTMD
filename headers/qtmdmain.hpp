@@ -75,6 +75,8 @@ private slots:
 
     void on_actionLicense_triggered();
 
+    void on_actionHelp_triggered();
+
 private:
     struct nick_message {
         QString nick;

@@ -546,3 +546,11 @@ void QtmdMain::on_actionLicense_triggered()
     viewer->exec();
     viewer->deleteLater();
 }
+
+void QtmdMain::on_actionHelp_triggered()
+{
+    HtmlViewer *viewer = new HtmlViewer(this);
+    viewer->setData(QString("Help"), QUrl(QString("qrc:/docs/help.html")));
+    viewer->exec();
+    viewer->deleteLater();
+}

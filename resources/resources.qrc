@@ -8,9 +8,9 @@
     <qresource prefix="/docs">
         <file>homepage.html</file>
         <file>LICENSE.html</file>
+        <file>help.html</file>
     </qresource>
     <qresource prefix="/certs">
-        <file>certs/RootCA.pem</file>
         <file>certs/TamanduaCA.pem</file>
     </qresource>
     <qresource prefix="/sounds">
