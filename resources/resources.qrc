@@ -9,6 +9,7 @@
         <file>homepage.html</file>
         <file>LICENSE.html</file>
         <file>help.html</file>
+        <file>author.html</file>
     </qresource>
     <qresource prefix="/certs">
         <file>certs/TamanduaCA.pem</file>

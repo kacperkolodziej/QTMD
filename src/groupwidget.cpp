@@ -8,6 +8,8 @@ GroupWidget::GroupWidget(QWidget *parent, tamandua::id_number_t gid_, QString na
     browser(new QTextBrowser(this))
 {
     layout->addWidget(browser);
+    browser->setOpenLinks(true);
+    browser->setOpenExternalLinks(true);
 }
 
 tamandua::id_number_t GroupWidget::getGid()

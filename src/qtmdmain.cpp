@@ -536,7 +536,10 @@ void QtmdMain::on_actionVersion_triggered()
 
 void QtmdMain::on_actionAuthor_triggered()
 {
-    QMessageBox::information(this, QString("Author"), QString("QTMD and Tamandua had been created by:\n\tKacper Kołodziej\n\tkacper@kolodziej.in\n\tkacperkolodziej.com"));
+    HtmlViewer *viewer = new HtmlViewer(this);
+    viewer->setData(QString("Author"), QUrl(QString("qrc:/docs/author.html")));
+    viewer->exec();
+    viewer->deleteLater();
 }
 
 void QtmdMain::on_actionLicense_triggered()
