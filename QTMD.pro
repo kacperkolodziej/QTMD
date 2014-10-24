@@ -46,10 +46,10 @@ win32: HEADERS += headers/tamandua/message.hpp \
     headers/tamandua/version.hpp \
     headers/tamandua/version_config.hpp
 
-FORMS    += qtmdmain.ui \
-    sslcertificate.ui \
-    sslerrors.ui \
-    htmlviewer.ui
+FORMS    += forms/qtmdmain.ui \
+    forms/sslcertificate.ui \
+    forms/sslerrors.ui \
+    forms/htmlviewer.ui
 
 unix: LIBS += -ltamandua_msg -lssl -lcrypto
 win32: LIBS += -L"C:/OpenSSL-Win32/lib" -llibeay32
