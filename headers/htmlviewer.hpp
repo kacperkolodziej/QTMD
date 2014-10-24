@@ -17,6 +17,9 @@ public:
 
     void setData(QString, QUrl);
 
+private slots:
+    void on_btnClose_clicked();
+
 private:
     Ui::HtmlViewer *ui;
 };

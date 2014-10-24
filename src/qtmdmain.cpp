@@ -5,6 +5,7 @@
 #include "messageedit.hpp"
 #include "groupwidget.hpp"
 #include "qtmd_version.hpp"
+#include "htmlviewer.hpp"
 #include "tamandua/message_composer.hpp"
 #include "tamandua/message_buffer.hpp"
 #include "tamandua/version.hpp"
@@ -540,5 +541,8 @@ void QtmdMain::on_actionAuthor_triggered()
 
 void QtmdMain::on_actionLicense_triggered()
 {
-
+    HtmlViewer *viewer = new HtmlViewer(this);
+    viewer->setData(QString("License"), QUrl(QString("qrc:/docs/LICENSE.html")));
+    viewer->exec();
+    viewer->deleteLater();
 }
