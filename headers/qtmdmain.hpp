@@ -79,6 +79,8 @@ private slots:
 
     void on_actionLogin_triggered();
 
+    void on_actionRegister_nickname_triggered();
+
 private:
     struct nick_message {
         QString nick;

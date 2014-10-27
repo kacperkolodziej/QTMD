@@ -7,6 +7,7 @@
 #include "qtmd_version.hpp"
 #include "htmlviewer.hpp"
 #include "loginwindow.hpp"
+#include "registerwindow.hpp"
 #include "tamandua/message_composer.hpp"
 #include "tamandua/message_buffer.hpp"
 #include "tamandua/version.hpp"
@@ -568,4 +569,13 @@ void QtmdMain::on_actionLogin_triggered()
     login->setCommand(QChar(command_char) + QString("auth \"%1\" \"%2\""));
     login->exec();
     login->deleteLater();
+}
+
+void QtmdMain::on_actionRegister_nickname_triggered()
+{
+    RegisterWindow *reg = new RegisterWindow(this);
+    reg->setSocket(socket);
+    reg->setCommand(QChar(command_char) + QString("register \"%1\""));
+    reg->exec();
+    reg->deleteLater();
 }
